@@ -6,11 +6,15 @@ import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.util.FileManager;
 
 
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by Rael on 27.05.2016.
- */
+
 public class testClass {
 
     /*
@@ -18,13 +22,29 @@ public class testClass {
 
      */
 
-    static String filePath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
-
+    //TODO: ścieżka do pliku powinna być arguentem wejściowym
+    static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
+    static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
+    static String ontologyIRI = "http://www.semanticweb.org/qfgen#";
     public static void main(String[] args) {
-        System.out.println("Hello world");
-        OntModel testModel = getOntologyModel(filePath);
 
-        String queryString =
+
+        //1. Load model from file path
+        OntModel testModel = getOntologyModel(ontologyPath);
+
+        for(String uri : testModel.listImportedOntologyURIs())
+        {
+            System.out.println(uri);
+        }
+
+        // TODO: wczytuj zapytanie z pliku
+        // 2. Create query
+        String queryString = readFile(queryPath,  StandardCharsets.UTF_8);
+
+        System.out.println("----------------------");
+        System.out.println("Zapytanie : \n" + queryString);
+        System.out.println("----------------------");
+                /*=
         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
         "PREFIX owl: <http://www.w3.org/2002/07/owl#>" +
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
@@ -36,40 +56,103 @@ public class testClass {
             "?pomieszczenie rdf:type :Pomieszczenie ." +
                 "}";
 
+        */
         Query query = QueryFactory.create(queryString);
 
-        System.out.println("----------------------");
-
-        System.out.println("Query Result Sheet");
 
         System.out.println("----------------------");
+        System.out.println("Wyniki zapytania");
+        System.out.println("----------------------");
 
-        System.out.println("Direct&Indirect Descendants (model1)");
-
-        System.out.println("-------------------");
-
-
-        // Execute the query and obtain results
+        //3. Execute the query and obtain results
         QueryExecution qe = QueryExecutionFactory.create(query, testModel);
         ResultSet results =  qe.execSelect();
 
-        // Output query results
-        ResultSetFormatter.out(System.out, results, query);
 
+
+        //4.  Output query results
+       // ResultSetFormatter.out(System.out, results, query);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsCSV(baos, results);
+        String output = "";
+        try {
+             output = baos.toString("UTF-8" );
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        output = output.replace(ontologyIRI, "");
+        System.out.println(output);
         qe.close();
 
+    /*
+        //5. Nazwy zmiennych zapytania
+
         System.out.println("----------------------");
-        System.out.println("Only Direct Descendants");
+        System.out.println("Vars");
         System.out.println("----------------------");
 
-        // Execute the query and obtain results
+        List<String> resultVars =  results.getResultVars();
+
+
+
         qe = QueryExecutionFactory.create(query, testModel);
         results =  qe.execSelect();
 
-        // Output query results
-        ResultSetFormatter.out(System.out, results, query);
-        qe.close();
+        // iterate through rows
+        for ( ; results.hasNext() ; )
+        {
 
+            QuerySolution soln = results.next();
+            for(String var : resultVars)
+            {
+                System.out.println(var);
+                RDFNode n = soln.get(var) ; // "x" is a variable in the query
+                // If you need to test the thing returned
+                System.out.println(n);
+                if ( n.isLiteral() )
+                    ((Literal)n).getLexicalForm() ;
+                if ( n.isResource() )
+                {
+
+                    Resource r = (Resource)n ;
+
+
+
+                    if ( ! r.isAnon() )
+                    {
+                       System.out.println(r.getURI());
+                    }
+                    else
+                    {
+                        System.out.println(r.getLocalName() + " " + r.getId());
+
+                    }
+            }
+            System.out.println("New column---------------------------------");
+        }
+        System.out.println("New row---------------------------------");
+
+        }
+
+
+
+
+
+    */
+    }
+
+    static String readFile(String path, Charset encoding)
+    {
+        String result = "";
+        try{
+            byte[] encoded = Files.readAllBytes(Paths.get(path));
+            result =  new String(encoded, encoding);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public static OntModel getOntologyModel(String ontoFile)
