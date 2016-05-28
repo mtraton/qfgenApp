@@ -21,11 +21,11 @@ public class testClass {
      */
 
     //TODO: ścieżka do pliku powinna być arguentem wejściowym
-    static String ontologyPath = "..\\qfgen\\rdfxml.owl";
+   static String ontologyPath = "..\\qfgen\\rdfxml.owl";
     static String queryPath = "..\\mainQuery";
 
-     //static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
-     //static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
+    //static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
+    //static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
 
     static String ontologyIRI = "http://www.semanticweb.org/qfgen#"; //TODO: dodać automatyczne wykrywnaie URI ontologii
 
@@ -35,14 +35,13 @@ public class testClass {
         //1. Load model from file path
         OntModel testModel = getOntologyModel(ontologyPath);
 
-        for(String uri : testModel.listImportedOntologyURIs())
-        {
+        for (String uri : testModel.listImportedOntologyURIs()) {
             System.out.println(uri);
         }
 
         // TODO: wczytuj zapytanie z pliku
         // 2. Create query
-        String queryString = readFile(queryPath,  StandardCharsets.UTF_8);
+        String queryString = readFile(queryPath, StandardCharsets.UTF_8);
 
         System.out.println("----------------------");
         System.out.println("Zapytanie : \n" + queryString);
@@ -57,26 +56,28 @@ public class testClass {
 
         //3. Execute the query and obtain results
         QueryExecution qe = QueryExecutionFactory.create(query, testModel);
-        ResultSet results =  qe.execSelect();
+        ResultSet results = qe.execSelect();
 
-        List<String> resultVars =  results.getResultVars();
+        List<String> resultVars = results.getResultVars();
 
 
         //4.  Output query results
-       // ResultSetFormatter.out(System.out, results, query);
+        //ResultSetFormatter.out(System.out, results, query);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsCSV(baos, results);
         String queryResult = "";
         //save result to String from outputStream
         try {
-            queryResult = baos.toString("UTF-8" );
+            queryResult = baos.toString("UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
         // delete ontology URI from query results since they're irrelevant in this context
         queryResult = queryResult.replace(ontologyIRI, "");
+        // turn into lowercase
+        queryResult = queryResult.toLowerCase();
         // split into lines
         String[] queryLines = queryResult.split("\n", -1);
 
@@ -87,52 +88,110 @@ public class testClass {
         // value - hashmap value
 
         //TODO: wrzucić do osobnej funkcji dla czytelności
-        
+
         int columnNumber = resultVars.size();
         int rowNumber = queryLines.length - 1;  // we are ommiting first line since it only contains var names
         ArrayList queryRows = new ArrayList(rowNumber);
-        
-          // split each line into array of seperate values and put them into hashmap
-        for(int lineCounter = 1; lineCounter < rowNumber ; lineCounter++) // we are ommiting first line since it only contains var names
+
+        // split each line into array of seperate values and put them into hashmap
+        for (int lineCounter = 1; lineCounter < rowNumber; lineCounter++) // we are ommiting first line since it only contains var names
         {
             HashMap queryRow = new HashMap(columnNumber);
-            String [] explodedRow = queryLines[lineCounter].split(",", -1);
-            for(int columnCounter = 0; columnCounter <  columnNumber; columnCounter++)
-            {
+            String[] explodedRow = queryLines[lineCounter].split(",", -1);
+            for (int columnCounter = 0; columnCounter < columnNumber; columnCounter++) {
 
                 System.out.println(resultVars.size() + ", " + explodedRow.length);
                 //System.out.println(resultVars.get(columnCounter));
                 System.out.println(explodedRow[columnCounter]);
-                queryRow.put(resultVars.get(columnCounter),explodedRow[columnCounter]);
+                queryRow.put(resultVars.get(columnCounter), explodedRow[columnCounter]);
             }
             queryRows.add(queryRow);
 
         }
 
+        /*
       for(Object hm : queryRows)
       {
           printMap((HashMap)hm) ;
       }
         qe.close();
+    */
+
+        //1. Znajdź wszystkie możliwe obiekty, które należą do wszystkich pokojów w ontologi
+        // TODO : wrzucić do jakiegoś pliku resource
+        String attributeString = "";
+        String attributeLineStart = "attribute(";
+        String attributeLineEnd = ")\n";
+        String nameSeparator = "_";
+        String elementSeparator = ",";
+        String booleanValues = "[true,false]";
+        String valueStart = "[";
+        String valueEnd = "]";
+        String valueMarker = "$$$"; //todo: jaki znak wybrać?
+
+        HashMap<String, String> objectPropertyValues = new HashMap<>();
+        LinkedList<String> attributeList = new LinkedList<>();
+        // iterate through list of hashmaps
+        for (Object hm : queryRows) {
+            //TODO: jak rozwiązać problem z odnoszeniem się do nazw kolumn
+
+            // TODO: musimy znać wszystkie możliwe wartości property - lepiej chyba zrobić to tak, że tworzymy sobie jakaś klasę w której przechowyujemy to po wszystkich iteracjach scalamy i do stringa
+            String booleanAttribute = "";
+            String propertyAttribute = "";
+            HashMap row = (HashMap) hm;
+            String roomType = resultVars.get(0);
+            String roomTypeName = (String) row.get(roomType); // todo: zmienić nazwę na mainObjectName
+
+            String objectType = resultVars.get(1);
+            String objectTypeName = (String) row.get(objectType); //
+
+            String objectProperty = resultVars.get(3);
+            String objectPropertyName = (String) row.get(objectProperty); //
+
+            //create
 
 
+            String propertyValue = resultVars.get(4);
+            String propertyValueName = (String) row.get(propertyValue); //
+
+            objectPropertyValues.put(objectPropertyName, propertyValueName);
+            //attribute(classroom_whiteboard, [true, false]).
+            //attribute(classroom_whiteboard_model, [blackboard, smartboard]).
+
+            // pomysł - tworzę hashmapę wlasnosc-wartosc i na koniec zbieram wszystkie wartosci dla jednej wlasnosci
+            booleanAttribute = attributeLineStart + roomTypeName + nameSeparator + objectTypeName + elementSeparator + booleanValues + attributeLineEnd;
+            propertyAttribute = attributeLineStart + roomTypeName + nameSeparator + objectTypeName + nameSeparator + valueStart + valueMarker + valueEnd + attributeLineEnd;
+
+            attributeList.add(booleanAttribute);
+            attributeList.add(propertyAttribute);
+        }
+
+        for (String s: attributeList
+             ) {
+            System.out.println(s);
+        }
+
+        //todo:
+        //1) znajdź wszystkie atrybuty z jokerem'
+        //2)) znajdź nazwę property w tym atrybucie
+        //3) zamień joker na wartości z hashmapy
+        //4. usunąć zdubplikowane linijki
     }
 
     public static void printMap(Map mp) {
         Iterator it = mp.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
+            Map.Entry pair = (Map.Entry) it.next();
             System.out.println(pair.getKey() + " = " + pair.getValue());
             it.remove(); // avoids a ConcurrentModificationException
         }
     }
 
-    static String readFile(String path, Charset encoding)
-    {
+    static String readFile(String path, Charset encoding) {
         String result = "";
-        try{
+        try {
             byte[] encoded = Files.readAllBytes(Paths.get(path));
-            result =  new String(encoded, encoding);
+            result = new String(encoded, encoding);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -140,24 +199,17 @@ public class testClass {
         return result;
     }
 
-    public static OntModel getOntologyModel(String ontoFile)
-    {
+    public static OntModel getOntologyModel(String ontoFile) {
         OntModel ontoModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);
-        try
-        {
+        try {
             InputStream in = FileManager.get().open(ontoFile);
-            try
-            {
+            try {
                 ontoModel.read(in, "RDF/XML");
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             System.out.println("Ontology " + ontoFile + " loaded.");
-        }
-        catch (JenaException je)
-        {
+        } catch (JenaException je) {
             System.err.println("ERROR" + je.getMessage());
             je.printStackTrace();
             System.exit(0);
@@ -165,11 +217,8 @@ public class testClass {
         return ontoModel;
     }
 
-    public String createAttributeList()
-    {
-            //1. Znajdź wszystkie możliwe obiekty, które należą do wszystkich pokojów w ontologii
-            return "";
-    }
+    public String createAttributeList() {return null;}
+
 
 
     /*
@@ -228,4 +277,5 @@ public class testClass {
 
     */
 
-}
+    }
+
