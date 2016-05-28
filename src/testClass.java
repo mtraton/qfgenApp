@@ -88,22 +88,33 @@ public class testClass {
         queryResult = queryResult.replace(ontologyIRI, "");
         // split into lines
         String[] queryLines = queryResult.split("\n", -1);
+        for(String s : queryLines)
+        {
+            System.out.println(s);
+        }
 
         // jak to przechować
         // Lista hashmap - każdy element listy to wiersz wyniku zapytania
         // nazwa kolumny to klucz
         // wartość kolumny to po prostu wartość
         ArrayList queryRows = new ArrayList(queryLines.length - 1);
-        int columnNumber = queryLines[0].length();
-
+        int columnNumber = resultVars.size();
+        int rowNumber = queryLines.length;
+        System.out.println("Rows :" + rowNumber + ", columns : " + columnNumber);
           // split into seperate values
-        for(int lineCounter = 1; lineCounter <= queryLines.length; lineCounter++) // we are ommiting first line since it only contains var names
+        for(int lineCounter = 1; lineCounter < queryLines.length - 1; lineCounter++) // we are ommiting first line since it only contains var names
         {
             HashMap queryRow = new HashMap(columnNumber);
             String [] explodedRow = queryLines[lineCounter].split(",", -1);
+            System.out.println("Line " + lineCounter);
+
             for(int column = 0; column <  columnNumber; column++)
             {
-                queryRow.put(resultVars.get(column), explodedRow[column]);
+
+                System.out.println(resultVars.size() + ", " + explodedRow.length);
+                //System.out.println(resultVars.get(column));
+                System.out.println(explodedRow[column]);
+                queryRow.put(resultVars.get(column),explodedRow[column]);
             }
             queryRows.add(queryRow);
 
