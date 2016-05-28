@@ -124,11 +124,16 @@ public class testClass {
 
         }
 
-       while(queryRows.listIterator().hasNext())
-       {
+        /*
+        while(queryRows.listIterator().hasNext())
+        {
            printMap((Map)queryRows.listIterator().next());
-       }
+        }
+        */
 
+        System.out.println( createEntries(queryRows) );
+
+        //QueryExecutionFactory close
         qe.close();
 
     /*
@@ -241,4 +246,44 @@ public class testClass {
             return "";
     }
 
+
+    /*
+    createEntries
+
+    ex:
+    entry(data{classroom_color:yellow, classroom_color_intensity:unspecified, classroom_name:"Laboratorium 316", classroom_size:small, id:lab316, place:classroom}).
+    entry(data{classroom_computer:true, classroom_computer_color:white, classroom_computer_model:unspecified, id:lab318}).
+     */
+    public static String createEntries(ArrayList queryList) {
+
+        String type = "typ";
+        String property = "wlasnosc";
+        String value = "wartosc";
+        String roomID = "pomieszczenie";
+        String roomType = "typPomieszczenia";
+        String obj = "obj";
+
+
+
+        StringBuilder entry = new StringBuilder();
+
+        //Loop for every line of query
+        for(int i=0; i<queryList.size(); i++) {
+            printMap( (HashMap)queryList.get(i) );
+            System.out.println();
+
+            boolean continueEntry = false;
+
+            if(i<queryList.size()-1) {
+                //if( queryList.get(i+1).  )
+            }
+
+
+            entry.append( "entry(data{" );
+        }
+
+
+
+        return entry.toString();
+    }
 }
