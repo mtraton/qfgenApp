@@ -19,13 +19,18 @@ public class testClass {
 
     /*
     Uwaga - trzeba zwracać uwagę przy wczytywaniu ontologii aby format zapisu się zgadzał
-
      */
 
     //TODO: ścieżka do pliku powinna być arguentem wejściowym
-    static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
-    static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
+    static String ontologyPath = "..\\qfgen\\rdfxml.owl";
+    static String queryPath = "..\\mainQuery";
+
+    //static String ontologyPath = "C:\\_Studia\\Praca\\Workshop\\qfgen\\rdfxml.owl";
+    //static String queryPath = "C:\\_Studia\\Praca\\Workshop\\mainQuery";
+
     static String ontologyIRI = "http://www.semanticweb.org/qfgen#";
+
+
     public static void main(String[] args) {
 
 
