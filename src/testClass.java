@@ -24,8 +24,8 @@ public class testClass {
     static String ontologyPath = "..\\qfgen\\rdfxml.owl";
     static String queryPath = "..\\mainQuery";
 
-    //static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
-    //static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
+     //static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
+     //static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
 
     static String ontologyIRI = "http://www.semanticweb.org/qfgen#"; //TODO: dodać automatyczne wykrywnaie URI ontologii
 
@@ -47,19 +47,7 @@ public class testClass {
         System.out.println("----------------------");
         System.out.println("Zapytanie : \n" + queryString);
         System.out.println("----------------------");
-                /*=
-        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
-        "PREFIX owl: <http://www.w3.org/2002/07/owl#>" +
-        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
-        "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> " +
-        "PREFIX :  <http://www.semanticweb.org/qfgen#> " +
-                "SELECT DISTINCT ?typPomieszczenia ?pomieszczenie " +
-        "WHERE {" +
-            "?pomieszczenie rdf:type ?typPomieszczenia ." +
-            "?pomieszczenie rdf:type :Pomieszczenie ." +
-                "}";
 
-        */
         Query query = QueryFactory.create(queryString);
 
 
@@ -80,56 +68,109 @@ public class testClass {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsCSV(baos, results);
         String queryResult = "";
-
-        System.out.println(results.getRowNumber());
-
+        //save result to String from outputStream
         try {
             queryResult = baos.toString("UTF-8" );
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
         // delete ontology URI from query results since they're irrelevant in this context
         queryResult = queryResult.replace(ontologyIRI, "");
         // split into lines
         String[] queryLines = queryResult.split("\n", -1);
-        for(String s : queryLines)
-        {
-            System.out.println(s);
-        }
 
-        // jak to przechować
-        // Lista hashmap - każdy element listy to wiersz wyniku zapytania
-        // nazwa kolumny to klucz
-        // wartość kolumny to po prostu wartość
-        ArrayList queryRows = new ArrayList(queryLines.length - 1);
+
+        // Query results is stored in list of hashmaps, where:
+        // row - each one element of list
+        // column - hashmap key (query variable)
+        // value - hashmap value
+
+        //TODO: wrzucić do osobnej funkcji dla czytelności
+        
         int columnNumber = resultVars.size();
-        int rowNumber = queryLines.length;
-        System.out.println("Rows :" + rowNumber + ", columns : " + columnNumber);
-          // split into seperate values
-        for(int lineCounter = 1; lineCounter < queryLines.length - 1; lineCounter++) // we are ommiting first line since it only contains var names
+        int rowNumber = queryLines.length - 1;  // we are ommiting first line since it only contains var names
+        ArrayList queryRows = new ArrayList(rowNumber);
+        
+          // split each line into array of seperate values and put them into hashmap
+        for(int lineCounter = 1; lineCounter < rowNumber ; lineCounter++) // we are ommiting first line since it only contains var names
         {
             HashMap queryRow = new HashMap(columnNumber);
             String [] explodedRow = queryLines[lineCounter].split(",", -1);
-            System.out.println("Line " + lineCounter);
-
-            for(int column = 0; column <  columnNumber; column++)
+            for(int columnCounter = 0; columnCounter <  columnNumber; columnCounter++)
             {
 
                 System.out.println(resultVars.size() + ", " + explodedRow.length);
-                //System.out.println(resultVars.get(column));
-                System.out.println(explodedRow[column]);
-                queryRow.put(resultVars.get(column),explodedRow[column]);
+                //System.out.println(resultVars.get(columnCounter));
+                System.out.println(explodedRow[columnCounter]);
+                queryRow.put(resultVars.get(columnCounter),explodedRow[columnCounter]);
             }
             queryRows.add(queryRow);
 
         }
 
-       while(queryRows.listIterator().hasNext())
-       {
-           printMap((Map)queryRows.listIterator().next());
-       }
-
+      for(Object hm : queryRows)
+      {
+          printMap((HashMap)hm) ;
+      }
         qe.close();
+
+
+    }
+
+    public static void printMap(Map mp) {
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+    }
+
+    static String readFile(String path, Charset encoding)
+    {
+        String result = "";
+        try{
+            byte[] encoded = Files.readAllBytes(Paths.get(path));
+            result =  new String(encoded, encoding);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static OntModel getOntologyModel(String ontoFile)
+    {
+        OntModel ontoModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);
+        try
+        {
+            InputStream in = FileManager.get().open(ontoFile);
+            try
+            {
+                ontoModel.read(in, "RDF/XML");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            System.out.println("Ontology " + ontoFile + " loaded.");
+        }
+        catch (JenaException je)
+        {
+            System.err.println("ERROR" + je.getMessage());
+            je.printStackTrace();
+            System.exit(0);
+        }
+        return ontoModel;
+    }
+
+    public String createAttributeList()
+    {
+            //1. Znajdź wszystkie możliwe obiekty, które należą do wszystkich pokojów w ontologii
+            return "";
+    }
+
 
     /*
         //5. Nazwy zmiennych zapytania
@@ -186,59 +227,5 @@ public class testClass {
 
 
     */
-    }
-
-    public static void printMap(Map mp) {
-        Iterator it = mp.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            System.out.println(pair.getKey() + " = " + pair.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
-    }
-
-    static String readFile(String path, Charset encoding)
-    {
-        String result = "";
-        try{
-            byte[] encoded = Files.readAllBytes(Paths.get(path));
-            result =  new String(encoded, encoding);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static OntModel getOntologyModel(String ontoFile)
-    {
-        OntModel ontoModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);
-        try
-        {
-            InputStream in = FileManager.get().open(ontoFile);
-            try
-            {
-                ontoModel.read(in, "RDF/XML");
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            System.out.println("Ontology " + ontoFile + " loaded.");
-        }
-        catch (JenaException je)
-        {
-            System.err.println("ERROR" + je.getMessage());
-            je.printStackTrace();
-            System.exit(0);
-        }
-        return ontoModel;
-    }
-
-    public String createAttributeList()
-    {
-            //1. Znajdź wszystkie możliwe obiekty, które należą do wszystkich pokojów w ontologii
-            return "";
-    }
 
 }
