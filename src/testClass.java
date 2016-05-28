@@ -11,8 +11,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class testClass {
@@ -25,11 +24,10 @@ public class testClass {
     static String ontologyPath = "..\\qfgen\\rdfxml.owl";
     static String queryPath = "..\\mainQuery";
 
-    //static String ontologyPath = "C:\\_Studia\\Praca\\Workshop\\qfgen\\rdfxml.owl";
-    //static String queryPath = "C:\\_Studia\\Praca\\Workshop\\mainQuery";
+    //static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
+    //static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
 
-    static String ontologyIRI = "http://www.semanticweb.org/qfgen#";
-
+    static String ontologyIRI = "http://www.semanticweb.org/qfgen#"; //TODO: dodać automatyczne wykrywnaie URI ontologii
 
     public static void main(String[] args) {
 
@@ -73,6 +71,7 @@ public class testClass {
         QueryExecution qe = QueryExecutionFactory.create(query, testModel);
         ResultSet results =  qe.execSelect();
 
+        List<String> resultVars =  results.getResultVars();
 
 
         //4.  Output query results
@@ -80,14 +79,56 @@ public class testClass {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsCSV(baos, results);
-        String output = "";
+        String queryResult = "";
+
+        System.out.println(results.getRowNumber());
+
         try {
-             output = baos.toString("UTF-8" );
+            queryResult = baos.toString("UTF-8" );
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        output = output.replace(ontologyIRI, "");
-        System.out.println(output);
+        // delete ontology URI from query results since they're irrelevant in this context
+        queryResult = queryResult.replace(ontologyIRI, "");
+        // split into lines
+        String[] queryLines = queryResult.split("\n", -1);
+        for(String s : queryLines)
+        {
+            System.out.println(s);
+        }
+
+        // jak to przechować
+        // Lista hashmap - każdy element listy to wiersz wyniku zapytania
+        // nazwa kolumny to klucz
+        // wartość kolumny to po prostu wartość
+        ArrayList queryRows = new ArrayList(queryLines.length - 1);
+        int columnNumber = resultVars.size();
+        int rowNumber = queryLines.length;
+        System.out.println("Rows :" + rowNumber + ", columns : " + columnNumber);
+          // split into seperate values
+        for(int lineCounter = 1; lineCounter < queryLines.length - 1; lineCounter++) // we are ommiting first line since it only contains var names
+        {
+            HashMap queryRow = new HashMap(columnNumber);
+            String [] explodedRow = queryLines[lineCounter].split(",", -1);
+            System.out.println("Line " + lineCounter);
+
+            for(int column = 0; column <  columnNumber; column++)
+            {
+
+                System.out.println(resultVars.size() + ", " + explodedRow.length);
+                //System.out.println(resultVars.get(column));
+                System.out.println(explodedRow[column]);
+                queryRow.put(resultVars.get(column),explodedRow[column]);
+            }
+            queryRows.add(queryRow);
+
+        }
+
+       while(queryRows.listIterator().hasNext())
+       {
+           printMap((Map)queryRows.listIterator().next());
+       }
+
         qe.close();
 
     /*
@@ -97,7 +138,7 @@ public class testClass {
         System.out.println("Vars");
         System.out.println("----------------------");
 
-        List<String> resultVars =  results.getResultVars();
+
 
 
 
@@ -147,6 +188,15 @@ public class testClass {
     */
     }
 
+    public static void printMap(Map mp) {
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+    }
+
     static String readFile(String path, Charset encoding)
     {
         String result = "";
@@ -183,6 +233,12 @@ public class testClass {
             System.exit(0);
         }
         return ontoModel;
+    }
+
+    public String createAttributeList()
+    {
+            //1. Znajdź wszystkie możliwe obiekty, które należą do wszystkich pokojów w ontologii
+            return "";
     }
 
 }
