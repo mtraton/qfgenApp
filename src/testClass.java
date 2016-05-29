@@ -122,6 +122,8 @@ public class testClass {
         qe.close();
     */
 
+
+        /*
         //1. Znajdź wszystkie możliwe obiekty, które należą do wszystkich pokojów w ontologi
         // TODO : wrzucić do jakiegoś pliku resource
         String attributeString = "";
@@ -171,10 +173,14 @@ public class testClass {
             attributeList.add(propertyAttribute);
         }
 
-        for (String s: attributeList
-             ) {
+        for (String s: attributeList) {
             System.out.println(s);
         }
+*/
+
+
+        System.out.println( createEntries(queryRows) );
+
 
         //todo:
         //1) znajdź wszystkie atrybuty z jokerem'
@@ -301,21 +307,64 @@ public class testClass {
 
         StringBuilder entry = new StringBuilder();
 
+        boolean newEntry = true;
+
         //Loop for every line of query
         for(int i=0; i<queryList.size(); i++) {
-            printMap( (HashMap)queryList.get(i) );
-            System.out.println();
+            //printMap( (HashMap)queryList.get(i) );
 
-            boolean continueEntry = false;
+            HashMap h = (HashMap) queryList.get(i);
+
+            String dataRoomType = (String)h.get(roomType);
+            String dataType = (String)h.get(type);
+            String dataProperty = (String)h.get(property);
+            String dataValue = (String)h.get(value);
+            String dataID = (String)h.get(roomID);
+
+            //APPEND:
+            if(newEntry) {
+                entry.append( "entry(data{" );
+                entry.append( dataRoomType );
+                entry.append("_");
+                entry.append( dataType );
+                entry.append(":true");
+                entry.append(", ");
+            }
+
+            entry.append( dataRoomType );
+            entry.append("_");
+            entry.append( dataType );
+            entry.append("_");
+            entry.append( dataProperty );
+            entry.append(":");
+            entry.append( dataValue );
+            entry.append(", ");
+
 
             if(i<queryList.size()-1) {
-                //if( queryList.get(i+1).  )
+                HashMap h1 = (HashMap) queryList.get(i+1);
+
+                String dataObj = (String)h.get(obj);
+                String dataNEXTObj = (String)h1.get(obj);
+
+                if( dataObj.equals( dataNEXTObj ) ) {
+                    newEntry = false;
+                } else {
+                    newEntry = true;
+                }
             }
 
 
-            entry.append( "entry(data{" );
-        }
+            if(newEntry) {
+                entry.append("id:");
+                entry.append( dataID.trim() );
+                entry.append("}).");
+                entry.append("\n");
+            }
+//TODO: Z JAKIEGOS POWODU W DATAID JEST JAKIS SMIEC KTORY USUWA CALA LINIJKE...
+//System.out.println("DATAID: "+dataID + dataID.length());
 
+        }
 
 
         return entry.toString();
