@@ -24,8 +24,8 @@ public class testClass {
     //static String ontologyPath = "..\\qfgen\\rdfxml.owl";
     //static String queryPath = "..\\mainQuery";
 
-     static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
-     static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
+    static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
+    static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
 
     static String ontologyIRI = "http://www.semanticweb.org/qfgen#"; //TODO: dodać automatyczne wykrywnaie URI ontologii
 
@@ -35,7 +35,7 @@ public class testClass {
         //1. Load model from file path
         OntModel testModel = getOntologyModel(ontologyPath);
 
-        for (String uri : testModel.listImportedOntologyURIs()) {
+        for(String uri : testModel.listImportedOntologyURIs()) {
             System.out.println(uri);
         }
 
@@ -341,6 +341,87 @@ public class testClass {
 
 
     */
+    /*
+    createEntries
 
+    ex:
+    entry(data{classroom_color:yellow, classroom_color_intensity:unspecified, classroom_name:"Laboratorium 316", classroom_size:small, id:lab316, place:classroom}).
+    entry(data{classroom_computer:true, classroom_computer_color:white, classroom_computer_model:unspecified, id:lab318}).
+     */
+    public static String createEntries(ArrayList queryList) {
+
+        String type = "typ";
+        String property = "wlasnosc";
+        String value = "wartosc";
+        String roomID = "pomieszczenie";
+        String roomType = "typPomieszczenia";
+        String obj = "obj";
+
+
+
+        StringBuilder entry = new StringBuilder();
+
+        boolean newEntry = true;
+
+        //Loop for every line of query
+        for(int i=0; i<queryList.size(); i++) {
+            //printMap( (HashMap)queryList.get(i) );
+
+            HashMap h = (HashMap) queryList.get(i);
+
+            String dataRoomType = (String)h.get(roomType);
+            String dataType = (String)h.get(type);
+            String dataProperty = (String)h.get(property);
+            String dataValue = (String)h.get(value);
+            String dataID = (String)h.get(roomID);
+
+            //APPEND:
+            if(newEntry) {
+                entry.append( "entry(data{" );
+                entry.append( dataRoomType );
+                entry.append("_");
+                entry.append( dataType );
+                entry.append(":true");
+                entry.append(", ");
+            }
+
+            entry.append( dataRoomType );
+            entry.append("_");
+            entry.append( dataType );
+            entry.append("_");
+            entry.append( dataProperty );
+            entry.append(":");
+            entry.append( dataValue );
+            entry.append(", ");
+
+
+            if(i<queryList.size()-1) {
+                HashMap h1 = (HashMap) queryList.get(i+1);
+
+                String dataObj = (String)h.get(obj);
+                String dataNEXTObj = (String)h1.get(obj);
+
+                if( dataObj.equals( dataNEXTObj ) ) {
+                    newEntry = false;
+                } else {
+                    newEntry = true;
+                }
+            }
+
+
+            if(newEntry) {
+                entry.append("id:");
+                entry.append( dataID.trim() );
+                entry.append("}).");
+                entry.append("\n");
+            }
+//TODO: Z JAKIEGOS POWODU W DATAID JEST JAKIS SMIEC KTORY USUWA CALA LINIJKE...
+//System.out.println("DATAID: "+dataID + dataID.length());
+
+        }
+
+
+        return entry.toString();
     }
+}
 
