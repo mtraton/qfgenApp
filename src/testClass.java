@@ -109,6 +109,8 @@ public class testClass {
 
         }
         String test = createAttributeList(queryRows, resultVars);
+        System.out.println(createEntries(queryRows));
+
         /*
       for(Object hm : queryRows)
       {
@@ -239,6 +241,8 @@ public class testClass {
              */
 
             //todo: uwzględnić wartość unspecified
+
+
 
             //attribute(classroom_name, ["Laboratorium 316", unspecified]).\ - do tego potrzebujemy innego zapytania
             //attribute(classroom_desk_color_intensity, [high, unspecified]).
