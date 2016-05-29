@@ -21,11 +21,11 @@ public class testClass {
      */
 
     //TODO: ścieżka do pliku powinna być arguentem wejściowym
-    static String ontologyPath = "..\\qfgen\\rdfxml.owl";
-    static String queryPath = "..\\mainQuery";
+    //static String ontologyPath = "..\\qfgen\\rdfxml.owl";
+    //static String queryPath = "..\\mainQuery";
 
-    //static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
-    //static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
+    static String ontologyPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\rdfxml.owl";
+    static String queryPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\mainQuery";
 
     static String ontologyIRI = "http://www.semanticweb.org/qfgen#"; //TODO: dodać automatyczne wykrywnaie URI ontologii
 
@@ -35,14 +35,13 @@ public class testClass {
         //1. Load model from file path
         OntModel testModel = getOntologyModel(ontologyPath);
 
-        for(String uri : testModel.listImportedOntologyURIs())
-        {
+        for(String uri : testModel.listImportedOntologyURIs()) {
             System.out.println(uri);
         }
 
         // TODO: wczytuj zapytanie z pliku
         // 2. Create query
-        String queryString = readFile(queryPath,  StandardCharsets.UTF_8);
+        String queryString = readFile(queryPath, StandardCharsets.UTF_8);
 
         System.out.println("----------------------");
         System.out.println("Zapytanie : \n" + queryString);
@@ -109,77 +108,21 @@ public class testClass {
             queryRows.add(queryRow);
 
         }
-
+        String test = createAttributeList(queryRows, resultVars);
         /*
-        for(Object hm : queryRows)
-        {
+      for(Object hm : queryRows)
+      {
           printMap((HashMap)hm) ;
-        }
-
-        System.out.println( createEntries(queryRows) );
-
-        //QueryExecutionFactory close
+      }
         qe.close();
     */
 
 
-        /*
+
         //1. Znajdź wszystkie możliwe obiekty, które należą do wszystkich pokojów w ontologi
         // TODO : wrzucić do jakiegoś pliku resource
-        String attributeString = "";
-        String attributeLineStart = "attribute(";
-        String attributeLineEnd = ")\n";
-        String nameSeparator = "_";
-        String elementSeparator = ",";
-        String booleanValues = "[true,false]";
-        String valueStart = "[";
-        String valueEnd = "]";
-        String valueMarker = "$$$"; //todo: jaki znak wybrać?
-
-        HashMap<String, String> objectPropertyValues = new HashMap<>();
-        LinkedList<String> attributeList = new LinkedList<>();
-        // iterate through list of hashmaps
-        for (Object hm : queryRows) {
-            //TODO: jak rozwiązać problem z odnoszeniem się do nazw kolumn
-
-            // TODO: musimy znać wszystkie możliwe wartości property - lepiej chyba zrobić to tak, że tworzymy sobie jakaś klasę w której przechowyujemy to po wszystkich iteracjach scalamy i do stringa
-            String booleanAttribute = "";
-            String propertyAttribute = "";
-            HashMap row = (HashMap) hm;
-            String roomType = resultVars.get(0);
-            String roomTypeName = (String) row.get(roomType); // todo: zmienić nazwę na mainObjectName
-
-            String objectType = resultVars.get(1);
-            String objectTypeName = (String) row.get(objectType); //
-
-            String objectProperty = resultVars.get(3);
-            String objectPropertyName = (String) row.get(objectProperty); //
-
-            //create
 
 
-            String propertyValue = resultVars.get(4);
-            String propertyValueName = (String) row.get(propertyValue); //
-
-            objectPropertyValues.put(objectPropertyName, propertyValueName);
-            //attribute(classroom_whiteboard, [true, false]).
-            //attribute(classroom_whiteboard_model, [blackboard, smartboard]).
-
-            // pomysł - tworzę hashmapę wlasnosc-wartosc i na koniec zbieram wszystkie wartosci dla jednej wlasnosci
-            booleanAttribute = attributeLineStart + roomTypeName + nameSeparator + objectTypeName + elementSeparator + booleanValues + attributeLineEnd;
-            propertyAttribute = attributeLineStart + roomTypeName + nameSeparator + objectTypeName + nameSeparator + valueStart + valueMarker + valueEnd + attributeLineEnd;
-
-            attributeList.add(booleanAttribute);
-            attributeList.add(propertyAttribute);
-        }
-
-        for (String s: attributeList) {
-            System.out.println(s);
-        }
-*/
-
-
-        System.out.println( createEntries(queryRows) );
 
 
         //todo:
@@ -197,6 +140,9 @@ public class testClass {
             it.remove(); // avoids a ConcurrentModificationException
         }
     }
+
+
+
 
     static String readFile(String path, Charset encoding) {
         String result = "";
@@ -228,7 +174,123 @@ public class testClass {
         return ontoModel;
     }
 
-    public String createAttributeList() {return null;}
+    public static String createAttributeList(List queryRows, List<String> resultVars) {
+
+        // constants definitions
+
+        String attributeString = "";
+        String attributeLineStart = "attribute(";
+        String attributeLineEnd = ")\n";
+        String nameSeparator = "_";
+        String elementSeparator = ",";
+        String booleanValues = "[true,false]";
+        String valueStart = "[";
+        String valueEnd = "]";
+        String valueMarker = "$$$"; // string to mark place when we will put values of property
+
+        HashMap<String, HashSet<String>> objectPropertyValues = new HashMap<>();
+
+
+        LinkedList<String> attributeList = new LinkedList<>();
+        // iterate through list of hashmaps
+        for (Object hm : queryRows) {
+            //TODO: jak rozwiązać problem z odnoszeniem się do nazw kolumn
+
+            // TODO: musimy znać wszystkie możliwe wartości property - lepiej chyba zrobić to tak, że tworzymy sobie jakaś klasę w której przechowyujemy to po wszystkich iteracjach scalamy i do stringa
+            String booleanAttribute = "";
+            String propertyAttribute = "";
+            HashMap row = (HashMap) hm;
+            String roomType = resultVars.get(0);
+            String roomTypeName = (String) row.get(roomType); // todo: zmienić nazwę na mainObjectName
+
+            String objectType = resultVars.get(1);
+            String objectTypeName = (String) row.get(objectType); //
+
+            String objectProperty = resultVars.get(3);
+            String objectPropertyName = (String) row.get(objectProperty); //
+
+            //create
+
+
+            String propertyValue = resultVars.get(4);
+            String propertyValueName = (String) row.get(propertyValue); //
+
+            // todo: jednoznacznie nam identyfikuje typ (tablica) i nazwa wlasności (model), a nie sama nazwa wlasnosci
+
+
+            String key = objectTypeName + nameSeparator + objectPropertyName;
+            // takie dodawanie nadpisuje ostanią wartość
+            // rozwiązanie - wartością jest zbiór lub lista
+
+            if(objectPropertyValues.containsKey(key))
+            {
+                HashSet<String> set = objectPropertyValues.get(key);
+                set.add(propertyValueName);
+                objectPropertyValues.put(key,set);
+            }
+            else
+            {
+                HashSet<String> set = new HashSet<>();
+                set.add(propertyValueName);
+                objectPropertyValues.put(key , set);
+            }
+
+            //attribute(classroom_whiteboard, [true, false]).
+            //attribute(classroom_whiteboard_model, [blackboard, smartboard]).
+
+            // pomysł - tworzę hashmapę wlasnosc-wartosc i na koniec zbieram wszystkie wartosci dla jednej wlasnosci
+            booleanAttribute = attributeLineStart + roomTypeName + nameSeparator + objectTypeName + elementSeparator + booleanValues + attributeLineEnd;
+            propertyAttribute = attributeLineStart + roomTypeName + nameSeparator + objectTypeName + nameSeparator + objectPropertyName + elementSeparator + valueStart + valueMarker + valueEnd + attributeLineEnd;
+
+            attributeList.add(booleanAttribute);
+            attributeList.add(propertyAttribute);
+        }
+        for (String s: attributeList
+                ) {
+            System.out.print(s);
+        }
+
+        // delete duplicate lines
+        List<String> attributeListWithoutDuplicates =  new ArrayList<>(new LinkedHashSet(attributeList));
+        for (String s : attributeListWithoutDuplicates
+             ) {
+            System.out.println(s);
+        }
+
+        // add values
+
+        for(String propertyName : objectPropertyValues.keySet())
+        {
+            System.out.println(propertyName + " = " + objectPropertyValues.get(propertyName).toString());
+            String searchedProperty = propertyName;
+            String values = objectPropertyValues.get(propertyName).toString();
+            values =  values.substring(1, values.length() - 1);  // delete [ and ] from values string
+            // iterate through list of attributes and put proper values of property
+            for (String attribute: attributeListWithoutDuplicates) {
+                System.out.println(searchedProperty  + " : "  + attribute);
+                if(attribute.contains(searchedProperty))
+                {
+                    System.out.println("FOUND!");
+                    int elementIndex = attributeListWithoutDuplicates.indexOf(attribute);
+
+
+                    String attributeWithValues = attribute.replace(valueMarker,values );
+                    attributeListWithoutDuplicates.set(elementIndex, attributeWithValues);
+                    //System.out.println(test);
+                }
+            }
+        }
+        // deal with sub attributes?
+
+        for (String s: attributeListWithoutDuplicates
+                ) {
+            System.out.print(s);
+        }
+
+        return null;
+
+
+    }
 
 
 
