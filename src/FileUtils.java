@@ -22,7 +22,7 @@ public class FileUtils {
     static String roomQueryPath = "./res/roomQuery";
     static String queryDescPath = "./res/descQuery";
     static String dataFilePath = "./output.arff";
-    static String ontologyIRI = "http://www.semanticweb.org/Qfgen#";
+    static String ontologyIRI = "http://www.semanticweb.org/qfgen#";
 
     // class FileUtils
     public static void printMap(Map mp) {

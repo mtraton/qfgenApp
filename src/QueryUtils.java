@@ -3,6 +3,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -39,7 +40,9 @@ public class QueryUtils {
     public List<HashMap<String,String>> getQueryAsListHashMap(String queryPath)
     {
         ResultSet results =  getQueryResult(queryPath);
+        //String s = FileUtils.readFile(queryPath, Charset.defaultCharset());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        //ResultSetFormatter.out(System.out, results);
         ResultSetFormatter.outputAsCSV(baos, results);
 
         //save result to String from outputStream
