@@ -125,8 +125,10 @@ public class EntryUtils {
      */
     public  HashMap describes() {
 
+
+        String queryDescPath = FileUtils.queryDescPath;
         //String queryDescPath = "..\\descQuery";
-        String queryDescPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\descQuery";
+        //String queryDescPath = "C:\\Users\\Rael\\Dropbox\\Uczelnia\\Workshop\\descQuery";
 
         String queryString = FileUtils.readFile(queryDescPath, StandardCharsets.UTF_8);
 
