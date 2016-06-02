@@ -599,6 +599,89 @@
         <Model rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</Model>
         <qfgen:Koszt rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</qfgen:Koszt>
     </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#koszt_Drzwi -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#koszt_Drzwi">
+        <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Drzwi"/>
+        <Kolor rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</Kolor>
+        <qfgen:Koszt rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</qfgen:Koszt>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#koszt_Komputer -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#koszt_Komputer">
+        <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Komputer"/>
+        <Kolor rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</Kolor>
+        <Model rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</Model>
+        <qfgen:Koszt rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</qfgen:Koszt>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#koszt_Okno -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#koszt_Okno">
+        <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Okno"/>
+        <qfgen:Koszt rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</qfgen:Koszt>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#koszt_Pomieszczenie -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#koszt_Pomieszczenie">
+        <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Pomieszczenie"/>
+        <Intensywność rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</Intensywność>
+        <Kolor rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</Kolor>
+        <Nazwa rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">100</Nazwa>
+        <Rozmiar rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</Rozmiar>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#koszt_Projektor -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#koszt_Projektor">
+        <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Projektor"/>
+        <Kolor rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</Kolor>
+        <qfgen:Koszt rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</qfgen:Koszt>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#koszt_Szafa -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#koszt_Szafa">
+        <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Szafa"/>
+        <Kolor rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</Kolor>
+        <qfgen:Koszt rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</qfgen:Koszt>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#koszt_Tablica -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#koszt_Tablica">
+        <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Tablica"/>
+        <Model rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</Model>
+        <qfgen:Koszt rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</qfgen:Koszt>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#koszt_Telewizor -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#koszt_Telewizor">
+        <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Telewizor"/>
+        <Kolor rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</Kolor>
+        <Model rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</Model>
+        <qfgen:Koszt rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</qfgen:Koszt>
+    </owl:NamedIndividual>
 </rdf:RDF>
 
 

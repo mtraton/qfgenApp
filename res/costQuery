@@ -11,4 +11,4 @@ WHERE {
 
 	FILTER  (?val != owl:NamedIndividual) .
 	FILTER regex(str(?obj), "koszt_") .
-}
+} ORDER BY ASC(str(?obj))
