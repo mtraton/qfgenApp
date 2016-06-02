@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://www.semanticweb.org/qfgen#"
      xml:base="http://www.semanticweb.org/qfgen"
+     xmlns:qfgen="http://www.semanticweb.org/qfgen.owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
@@ -202,6 +203,15 @@
     <!-- http://www.semanticweb.org/qfgen#UID -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/qfgen#UID">
+        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#Koszt -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/qfgen.owl#Koszt">
         <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
@@ -576,6 +586,18 @@
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#komputer_318_2">
         <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Komputer"/>
         <Kolor>biały</Kolor>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/qfgen.owl#koszt_Biurko -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/qfgen.owl#koszt_Biurko">
+        <rdf:type rdf:resource="http://www.semanticweb.org/qfgen#Biurko"/>
+        <Intensywność rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">40</Intensywność>
+        <Kolor rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</Kolor>
+        <Model rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</Model>
+        <qfgen:Koszt rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</qfgen:Koszt>
     </owl:NamedIndividual>
 </rdf:RDF>
 
