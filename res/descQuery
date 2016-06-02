@@ -5,6 +5,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX : <http://www.semanticweb.org/qfgen#>
 
 SELECT ?what ?target ?val 
-	WHERE { ?what :opisuje ?target .
-		[]  ?what ?val .
-	}
+WHERE { ?what :opisuje ?target .
+    ?obj ?what ?val .
+    FILTER (!regex(str(?obj), "koszt_")) .
+}

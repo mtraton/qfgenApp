@@ -54,6 +54,7 @@ public class QueryUtils {
         }
 
         // delete ontology URI from QueryUtils results since they're irrelevant in this context
+        queryResult = queryResult.replace(FileUtils.ontologyIRIowl, "");
         queryResult = queryResult.replace(FileUtils.ontologyIRI, "");
 
         // delete carriage return characters from QueryUtils results since they mess up printing results

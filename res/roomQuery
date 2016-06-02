@@ -6,13 +6,13 @@ PREFIX : <http://www.semanticweb.org/qfgen#>
 
 SELECT DISTINCT ?pomieszczenie  ?rel ?val 
 WHERE {
-?pomieszczenie rdf:type :Pomieszczenie .
-?pomieszczenie ?rel ?val . 
-FILTER (?rel != :składa_się) .
-FILTER (?val != owl:NamedIndividual) .
-FILTER (?rel != rdf:type) .
-
- }
+    ?pomieszczenie rdf:type :Pomieszczenie .
+    ?pomieszczenie ?rel ?val .
+    FILTER (?rel != :składa_się) .
+    FILTER (?val != owl:NamedIndividual) .
+    FILTER (?rel != rdf:type) .
+    FILTER (!regex(str(?pomieszczenie), "koszt_")) .
+}
 
 # //attribute(classroom_name, ["Laboratorium 316", unspecified]).\ - do tego potrzebujemy innego zapytania
 #            //attribute(classroom_desk_color_intensity, [high, unspecified]).

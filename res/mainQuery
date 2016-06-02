@@ -19,5 +19,5 @@ WHERE {
 	FILTER  (?typ != owl:NamedIndividual) .
 	FILTER  (?wartosc != owl:NamedIndividual) .
 	FILTER  (?wlasnosc != rdf:type) .
-	
-}
+	FILTER (!regex(str(?obj), "koszt_")) .
+} ORDER BY ASC(str(?obj))
