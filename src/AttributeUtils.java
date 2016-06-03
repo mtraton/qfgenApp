@@ -5,16 +5,18 @@ import java.util.*;
 /**
  * Created by Rael on 30.05.2016.
  */
+
+//todo: posprzątać kod
+//todo: ujednolicić nazwy zmiennych w zapytaniach
 public class AttributeUtils {
-    //class dataAttributes
 
     // string constants needed to create attributes
     private String roomTypeName = "pomieszczenie";
     private String attributeLineStart = "attribute(";
     private String attributeLineEnd = ").\n";
     private String nameSeparator = "_";
-    private String elementSeparator = ",";
-    private String booleanValues = "[true,false]";
+    private String elementSeparator = ", ";
+    private String booleanValues = ", [true,false]";
     private String valueStart = "[";
     private String valueEnd = ", unspecified]";
     private String valueMarker = "$$$"; // string to mark place when we will put values of property
@@ -29,38 +31,7 @@ public class AttributeUtils {
     {
         this.model = model;
     }
-
-    public  String createBooleanAttributeString(HashMap<Integer, String> rowValues)
-    {
-        int [] numbers =   {0, 1};  //variable values numbers from QueryUtils which are needed to create given attribute
-
-        return attributeLineStart + rowValues.get(numbers[0]) + nameSeparator + rowValues.get(numbers[1]) + elementSeparator + booleanValues + attributeLineEnd;
-    }
-
-    public String createPropertyAttributeString(HashMap<Integer, String> rowValues)
-    {
-        int [] numbers =   {0,1,3}; //variable values numbers from QueryUtils which are needed to create given attribute
-
-        return attributeLineStart + rowValues.get(numbers[0]) + nameSeparator + rowValues.get(numbers[1]) + nameSeparator + rowValues.get(numbers[2]) + elementSeparator + valueStart + valueMarker + valueEnd + attributeLineEnd;
-    }
-
-    public  String createRoomAttribute(HashMap<Integer, String> rowValues)
-    {
-        int [] numbers =   {1};
-        String roomProperty = rowValues.get(numbers[0]); //variable values numbers from QueryUtils which are needed to create given attribute
-
-        return attributeLineStart +
-                "pomieszczenie" +
-                nameSeparator +
-                roomProperty +
-                elementSeparator +
-                valueStart +
-                valueMarker +
-                valueEnd +
-                attributeLineEnd;
-    }
-
-
+    
     public String createAttributes()
     {
         // output - list of attributes
@@ -84,71 +55,34 @@ public class AttributeUtils {
         roomAttributes  = iterateThroughRows("RoomAttributes",queryRows, resultVars, roomNumbers, roomNumbers);
         List allRoomAttributes = new ArrayList<>(roomElementAttributes);
         allRoomAttributes.addAll(roomAttributes);
-
-        //3. Create attributes with subattributes
-        queryRows =  query.getQueryAsListHashMap(FileUtils.queryDescPath);
-        resultVars = query.getResultVars(FileUtils.queryDescPath);
-        List<String> allAttributes = new LinkedList<>();
-
-        HashMap<String, HashSet<String>> subAtributeVals = new HashMap<>();
-
-        for (HashMap<String, String> row: queryRows)
-        {
-            String subAttribute = row.get(resultVars.get(0));
-            String attribute = row.get(resultVars.get(1));
-            String subAttributeVal =  row.get(resultVars.get(2));
-            for(String attr : (List<String>) allRoomAttributes)
-            {
-                if(attr.contains(attribute))
-                {
-                    String newAttribute = attr.replace(attribute, attribute + nameSeparator + subAttribute);
-
-                    // delete everything after [ character
-                    newAttribute = newAttribute.substring(0, newAttribute.indexOf("[") +1);
-
-                    HashSet<String> set;
-                    if(subAtributeVals.containsKey(subAttribute))
-                    {
-                        set = subAtributeVals.get(subAttribute);
-                    }
-                    else
-                    {
-                        set = new HashSet<>();
-                    }
-                    set.add(subAttributeVal);
-                    subAtributeVals.put(subAttribute,set);
-                    allAttributes.add(newAttribute);
-                }
-            }
-        }
-        // add values of subattribute
-        for(String key : subAtributeVals.keySet())
-        {
-            for (String attribute: allAttributes
-                    ) {
-                if (attribute.contains(key))
-                {
-                    String vals = subAtributeVals.get(key).toString();
-                    vals = vals.substring(1, vals.length() -1); // delete [] from string
-                    vals = vals + valueEnd + attributeLineEnd;
-                    String newAttribute = attribute.concat(vals);
-                    allAttributes.set(allAttributes.indexOf(attribute), newAttribute);
-                }
-            }
-        }
-        allAttributes.addAll(allRoomAttributes);
-        String output =  allAttributes.toString();
+        
+        //3. Convert list to string
+        String output =   allRoomAttributes.toString();
         output = output.replace("\n,", "\n"); // delete unnecessary commas created when using toString();
         output = output.substring(1, output.length() - 1);
         return output;
     }
-
-    public  String createRoomKey(HashMap<Integer, String> rowValues)
+    
+    public  String createRoomKey(HashMap<String, String> rowValues)
     {
-        String key = roomTypeName  + nameSeparator + rowValues.get(1) ;
-        return key;
-
+        String s = roomTypeName + nameSeparator  + rowValues.get("rel");
+        return s;
     }
+
+
+    public  String createRoomElementKey2(HashMap<String, String> rowValues)
+    {
+
+        String s = rowValues.get("typPomieszczenia") + nameSeparator + rowValues.get("typ") + nameSeparator + rowValues.get("wlasnosc");
+        return s;
+    }
+
+    public  String createBooleanKey(HashMap<String, String> rowValues)
+    {
+        String s = rowValues.get("typPomieszczenia") + nameSeparator + rowValues.get("typ");
+        return s;
+    }
+
     public  String createRoomElementKey(HashMap<Integer, String> rowValues, int[] numbers)
     {
         String key = "";
@@ -160,9 +94,36 @@ public class AttributeUtils {
         return key;
     }
 
-    public  String createSubAttributeKey(HashMap<Integer, String> rowValues)
+    public  String createSubAttributeKey(HashMap<String, String> rowValues)
     {
-        return rowValues.get(0);
+        String s = roomTypeName + nameSeparator + rowValues.get("nad") + nameSeparator + rowValues.get("rel");
+        return s;
+    }
+
+    public  String createElementSubAttributeKey(HashMap<String, String> rowValues)
+    {
+        String s = rowValues.get("typPomieszczenia") + nameSeparator + rowValues.get("typ") + nameSeparator + rowValues.get("nad") + nameSeparator  + rowValues.get("wlasnosc");
+        return s;
+    }
+
+
+    public String createAttribute(String key)
+    {
+        String s = attributeLineStart + key +
+           elementSeparator +
+            valueStart +
+            valueMarker +
+            valueEnd +
+            attributeLineEnd;
+        return s;
+    }
+
+    public String createBooleanAttribute(String key)
+    {
+        String s =  attributeLineStart + key +
+                booleanValues +
+                attributeLineEnd;
+        return s;
     }
 
     // iterate through QueryUtils rows and produce things
@@ -172,8 +133,9 @@ public class AttributeUtils {
         List attributeList = new LinkedList<>();
         HashMap<Integer, String> rowValues = new HashMap<>();
         HashMap<String, HashSet<String>> objectPropertyValues = new HashMap<>();
+        HashMap row;
         for (Object hm : queryRows) {
-            HashMap row = (HashMap) hm;
+            row = (HashMap) hm;
             for (int number: variableNumbers) {
                 String key = (String) resultVars.get(number);
                 String value = (String) row.get(key);
@@ -181,14 +143,39 @@ public class AttributeUtils {
             }
 
             String key = "";
+            String booleanKey = "";
+            // wykrywanie przypadku poatrybutu
+
+
+            String s = (String) row.get("nad");
+
 
             if(type.equals("RoomElementAttributes"))
             {
-                key = createRoomElementKey(rowValues, numbers);
+
+                if((!s.isEmpty()))
+                {
+                    key = createElementSubAttributeKey(row);
+                }
+                else
+                {
+                    key = createRoomElementKey2(row);
+                    booleanKey = createBooleanKey(row);
+                }
+
             }
             else if(type.equals("RoomAttributes"))
             {
-                key = createRoomKey(rowValues);
+                if(!((String) row.get("nad")).isEmpty())
+                {
+                   key = createSubAttributeKey(row);
+
+                }
+                else
+                {
+                    key = createRoomKey(row);
+                }
+
             }
 
             HashMap<String, HashSet<String>> subAtributeVals = new HashMap<>();
@@ -207,16 +194,23 @@ public class AttributeUtils {
             }
             set.add(value);
             objectPropertyValues.put(key , set);
-
+            // zamiast do listy dodawać te atrybuty do setu
             if(type.equals("RoomElementAttributes"))
             {
-                attributeList.add(createBooleanAttributeString(rowValues));
-                attributeList.add(createPropertyAttributeString(rowValues));
+
+                    attributeList.add(createAttribute(key));
+                if(!booleanKey.isEmpty()) {
+                    attributeList.add(createBooleanAttribute(booleanKey));
+                }
+
             }
             else if(type.equals("RoomAttributes"))
             {
-                attributeList.add(createRoomAttribute(rowValues));
+
+                attributeList.add(createAttribute(key));
             }
+
+
 
         }
 

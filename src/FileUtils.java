@@ -21,9 +21,12 @@ public class FileUtils {
     static String queryPath = "./res/mainQuery";
     static String roomQueryPath = "./res/roomQuery";
     static String queryDescPath = "./res/descQuery";
+    static String costQueryPath = "./res/costQuery";
+    static String subAttrQueryPath = "./res/subAttrQuery";
     static String dataFilePath = "./output.arff";
     static String ontologyIRI = "http://www.semanticweb.org/qfgen#";
     static String ontologyIRIowl = "http://www.semanticweb.org/qfgen.owl#";
+
 
     // class FileUtils
     public static void printMap(Map mp) {

@@ -21,8 +21,9 @@ public class Qfgen {
         //3. Save to file
         AttributeUtils attributeUtils = new AttributeUtils(ont);
         EntryUtils entryUtils = new EntryUtils(ont);
+        CostUtils costUtils = new CostUtils(ont);
 
-        String outputData = attributeUtils.createAttributes() + "\n" + entryUtils.createEntries((ArrayList) queryRows);
+        String outputData = attributeUtils.createAttributes() + "\n" + entryUtils.createEntries((ArrayList) queryRows) + costUtils.createCosts();
         FileUtils.saveFile(FileUtils.dataFilePath,  outputData );
     }
 }

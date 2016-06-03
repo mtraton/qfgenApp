@@ -4,8 +4,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX : <http://www.semanticweb.org/qfgen#>
 
-SELECT    ?typPomieszczenia ?typ ?obj  ?wlasnosc ?wartosc  ?pomieszczenie 
-WHERE { 
+SELECT    ?typPomieszczenia ?typ ?obj  ?wlasnosc ?wartosc  ?pomieszczenie ?nad
+WHERE {
 # pomieszczenie i jego typ
 	?pomieszczenie rdf:type ?typPomieszczenia.
 	?pomieszczenie rdf:type :Pomieszczenie .
@@ -13,8 +13,8 @@ WHERE {
 	?pomieszczenie :składa_się ?obj .
 	?obj rdf:type ?typ .
 # elementy i jego własnosci
-	?obj ?wlasnosc ?wartosc
-	
+	?obj ?wlasnosc ?wartosc .
+	OPTIONAL {?wlasnosc :opisuje ?nad .}
 	FILTER  (?typPomieszczenia != owl:NamedIndividual) .
 	FILTER  (?typ != owl:NamedIndividual) .
 	FILTER  (?wartosc != owl:NamedIndividual) .

@@ -4,17 +4,14 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX : <http://www.semanticweb.org/qfgen#>
 
-SELECT DISTINCT ?pomieszczenie  ?rel ?val 
+SELECT DISTINCT ?pomieszczenie  ?rel ?val ?nad
 WHERE {
     ?pomieszczenie rdf:type :Pomieszczenie .
     ?pomieszczenie ?rel ?val .
+OPTIONAL {?rel :opisuje ?nad .}
     FILTER (?rel != :składa_się) .
     FILTER (?val != owl:NamedIndividual) .
     FILTER (?rel != rdf:type) .
     FILTER (!regex(str(?pomieszczenie), "koszt_")) .
-}
+	}
 
-# //attribute(classroom_name, ["Laboratorium 316", unspecified]).\ - do tego potrzebujemy innego zapytania
-#            //attribute(classroom_desk_color_intensity, [high, unspecified]).
-#            //attribute(classroom_desk_model, [regular, unspecified]).
-#            //attribute(classroom_door_color, [gray]).
