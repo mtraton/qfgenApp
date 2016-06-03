@@ -20,6 +20,7 @@ public class FileUtils {
     static String ontologyPath = "./res/rdfxml.owl"; // be sure to save and load ontology in propert format - we assume rdf/xml format
     static String queryPath = "./res/mainQuery";
     static String roomQueryPath = "./res/roomQuery";
+    static String roomAttrQueryPath = "./res/roomAttrQuery";
     static String queryDescPath = "./res/descQuery";
     static String costQueryPath = "./res/costQuery";
     static String subAttrQueryPath = "./res/subAttrQuery";

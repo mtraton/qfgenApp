@@ -4,14 +4,15 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX : <http://www.semanticweb.org/qfgen#>
 
-SELECT DISTINCT ?pomieszczenie  ?rel ?val ?nad
+SELECT ?id ?rel ?val ?roomType
 WHERE {
-    ?pomieszczenie rdf:type :Pomieszczenie .
-    ?pomieszczenie ?rel ?val .
-OPTIONAL {?rel :opisuje ?nad .}
-    FILTER (?rel != :składa_się) .
+    ?id rdf:type :Pomieszczenie .
+    ?id rdf:type ?roomType .
+    ?id ?rel ?val .
+
+    FILTER (!regex(str(?id), "koszt_")) .
     FILTER (?val != owl:NamedIndividual) .
-    FILTER (?rel != rdf:type) .
-    FILTER (!regex(str(?pomieszczenie), "koszt_")) .
-}
+    FILTER (?rel != :składa_się) .
+    FILTER (?roomType != owl:NamedIndividual) .
+} ORDER BY ?id
 
