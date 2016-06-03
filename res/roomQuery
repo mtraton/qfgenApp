@@ -12,6 +12,7 @@ OPTIONAL {?rel :opisuje ?nad .}
     FILTER (?rel != :składa_się) .
     FILTER (?val != owl:NamedIndividual) .
     FILTER (?rel != rdf:type) .
+    FILTER (!regex(str(?rel), "Ignoruj")) .
     FILTER (!regex(str(?pomieszczenie), "koszt_")) .
 	}
 
