@@ -28,7 +28,11 @@ public class EntryUtils {
         this.model = model;
     }
 
-    public String createEntries(ArrayList queryList) {
+    public String createEntries() {
+
+        QueryUtils query = new QueryUtils(model);
+        ArrayList queryList = (ArrayList) query.getQueryAsListHashMap(FileUtils.queryPath);
+
 
         HashMap describesQuery = describes();
 
@@ -106,14 +110,96 @@ public class EntryUtils {
                 entry.append("}).");
                 entry.append("\n");
             }
-//TODO: Z JAKIEGOS POWODU W DATAID JEST JAKIS SMIEC KTORY USUWA CALA LINIJKE...
-//System.out.println("DATAID: "+dataID + dataID.length());
-
         }
 
 
         return entry.toString();
     }
+
+
+    public String createEntriesRooms() {
+
+        QueryUtils query = new QueryUtils(model);
+        ArrayList queryList = (ArrayList) query.getQueryAsListHashMap(FileUtils.roomAttrQueryPath);
+
+
+        HashMap describesQuery = describes();
+
+
+        //todo: hard-code keys (?)
+        String roomID = "id";
+        String rel = "rel";
+        String value = "val";
+        String roomType = "roomType";
+
+
+        StringBuilder entry = new StringBuilder();
+
+        boolean newEntry = true;
+
+        //Loop for every line of QueryUtils
+        for(int i=0; i<queryList.size(); i++) {
+
+            HashMap h = (HashMap) queryList.get(i);
+
+            String dataID = (String)h.get(roomID);
+            String dataRel = (String)h.get(rel);
+            String dataValue = (String)h.get(value);
+            String dataRoomType = (String)h.get(roomType);
+
+            //APPEND:
+            if(newEntry) {
+                entry.append( "entry(data{" );
+            }
+
+            if(!dataRel.equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
+                entry.append( dataRoomType );
+                entry.append("_");
+
+                if(describesQuery.containsKey(dataRel)) {
+                    String valDescribed = (String)describesQuery.get(dataRel);
+
+                    entry.append( valDescribed.trim() );// delete carriage returns
+                    entry.append("_");
+                }
+
+                entry.append( dataRel );
+                entry.append(":");
+                entry.append( dataValue );
+                entry.append(", ");
+            }
+
+            if(i<queryList.size()-1) {
+                HashMap h1 = (HashMap) queryList.get(i+1);
+
+                String dataObj = (String)h.get(roomID);
+                String dataNEXTObj = (String)h1.get(roomID);
+
+                if( dataObj.equals( dataNEXTObj ) ) {
+                    newEntry = false;
+                } else {
+                    newEntry = true;
+                }
+            }
+
+
+            if(newEntry) {
+                entry.append("id:");
+                entry.append( dataID.trim() );  //REMEMBER trim() !!
+
+                entry.append(", ");
+                entry.append("place:");
+                entry.append( dataRoomType );
+
+                entry.append("}).");
+                entry.append("\n");
+            }
+        }
+
+
+        return entry.toString();
+    }
+
 
 
     /*
