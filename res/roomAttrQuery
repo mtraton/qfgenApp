@@ -14,5 +14,6 @@ WHERE {
     FILTER (?val != owl:NamedIndividual) .
     FILTER (?rel != :składa_się) .
     FILTER (?roomType != owl:NamedIndividual) .
+    FILTER NOT EXISTS { ?id :Ignoruj [] . }
 } ORDER BY ?id
 

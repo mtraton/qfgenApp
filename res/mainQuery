@@ -7,18 +7,18 @@ PREFIX : <http://www.semanticweb.org/qfgen#>
 SELECT    ?typPomieszczenia ?typ ?obj  ?wlasnosc ?wartosc  ?pomieszczenie ?nad
 WHERE {
 # pomieszczenie i jego typ
-	?pomieszczenie rdf:type ?typPomieszczenia.
-	?pomieszczenie rdf:type :Pomieszczenie .
+ ?pomieszczenie rdf:type ?typPomieszczenia.
+ ?pomieszczenie rdf:type :Pomieszczenie .
 # pomieszczenie i jego elementy
-	?pomieszczenie :składa_się ?obj .
-	?obj rdf:type ?typ .
+ ?pomieszczenie :składa_się ?obj .
+ ?obj rdf:type ?typ .
 # elementy i jego własnosci
-	?obj ?wlasnosc ?wartosc .
-	OPTIONAL {?wlasnosc :opisuje ?nad .}
-	FILTER  (?typPomieszczenia != owl:NamedIndividual) .
-	FILTER  (?typ != owl:NamedIndividual) .
-	FILTER  (?wartosc != owl:NamedIndividual) .
-	FILTER  (?wlasnosc != rdf:type) .
-	FILTER (!regex(str(?obj), "koszt_")) .
-	FILTER (!regex(str(?wlasnosc), "Ignoruj")) .
+ ?obj ?wlasnosc ?wartosc .
+ OPTIONAL {?wlasnosc :opisuje ?nad .}
+ FILTER  (?typPomieszczenia != owl:NamedIndividual) .
+ FILTER  (?typ != owl:NamedIndividual) .
+ FILTER  (?wartosc != owl:NamedIndividual) .
+ FILTER  (?wlasnosc != rdf:type) .
+ FILTER (!regex(str(?obj), "koszt_")) .
+    FILTER NOT EXISTS { ?obj :Ignoruj [] . }
 } ORDER BY ASC(str(?obj))
